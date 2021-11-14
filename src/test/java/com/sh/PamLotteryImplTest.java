@@ -1,7 +1,6 @@
 package com.sh;
 
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,10 +15,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class PamLotteryImplTest {
   private static final Logger logger = LoggerFactory.getLogger(PamLotteryImplTest.class);
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void noDrawNoWinners() {
     PamLottery lottery = new PamLotteryImpl(10, BigDecimal.valueOf(100));
-    lottery.winners();
+    assertThatThrownBy(() -> lottery.winners()).isInstanceOf(IllegalStateException.class);
   }
 
   @Test
@@ -33,6 +32,22 @@ public class PamLotteryImplTest {
   public void noBallsSelectedTwice() {
     PamLottery lottery = new PamLotteryImpl(10, BigDecimal.valueOf(100));
     assertThat(lottery.draw()).isNotEmpty();
+  }
+
+  @Test
+  public void nullBuyersAreNotAllowed() {
+    PamLottery lottery = new PamLotteryImpl(10, BigDecimal.valueOf(100));
+    assertThatThrownBy(() -> lottery.purchase(null)).isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
+  public void emptyBuyersAreNotAllowed() {
+    PamLottery lottery = new PamLotteryImpl(10, BigDecimal.valueOf(100));
+    assertThatThrownBy(() -> lottery.purchase("")).isInstanceOf(IllegalArgumentException.class);
+  }
+
+  public void stacksTotalMatchToTotal() {
+    PamLotteryImpl lottery = new PamLotteryImpl(10, BigDecimal.valueOf(100));
   }
 
   @Test

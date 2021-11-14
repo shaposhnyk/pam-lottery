@@ -32,7 +32,7 @@ public class PamLotteryImpl implements PamLottery {
   public PamLotteryImpl(long seed, BigDecimal initialPot, int totalBalls, int... stakes) {
     this.rng = new Random(seed);
     this.initialPot = initialPot;
-    this.balls = IntStream.range(1, totalBalls+1).boxed().collect(Collectors.toList());
+    this.balls = IntStream.range(1, totalBalls + 1).boxed().collect(Collectors.toList());
 
     this.purchases = new HashMap<>();
     this.draw = new ArrayList<>();
@@ -62,7 +62,7 @@ public class PamLotteryImpl implements PamLottery {
 
   @Override
   public BigDecimal info() {
-    return draw.isEmpty()? initialPot : initialPot.subtract(winnersTotal());
+    return draw.isEmpty() ? initialPot : initialPot.subtract(winnersTotal());
   }
 
   /**
@@ -79,10 +79,10 @@ public class PamLotteryImpl implements PamLottery {
   @Override
   public Integer purchase(String lastName) {
     if (lastName == null || lastName.trim().isEmpty()) {
-      throw new IllegalStateException("Name should not be empty");
+      throw new IllegalArgumentException("Name should not be empty");
     }
-
-    Integer ball = balls.get(rng.nextInt(balls.size()));
+    initialPot.add(BigDecimal.TEN);
+    final Integer ball = randomBall();
     purchases.computeIfAbsent(ball, key -> new ArrayList<>()).add(lastName);
     return ball;
   }
@@ -99,7 +99,8 @@ public class PamLotteryImpl implements PamLottery {
   }
 
   private Winners winnerOf(int drawIdx) {
-    return new WinnersImpl(stakes.get(drawIdx), purchases.getOrDefault(draw.get(drawIdx), Collections.emptyList()));
+    List<String> winners = purchases.getOrDefault(draw.get(drawIdx), Collections.emptyList());
+    return new WinnersImpl(stakes.get(drawIdx), winners);
   }
 
   @Override
@@ -107,6 +108,7 @@ public class PamLotteryImpl implements PamLottery {
     if (!draw.isEmpty()) {
       throw new IllegalStateException("Draw is already made");
     }
+
     Integer first = drawRandom();
     Integer second = drawRandom(first);
     Integer third = drawRandom(first, second);
@@ -114,7 +116,7 @@ public class PamLotteryImpl implements PamLottery {
     return draw;
   }
 
-  private Integer drawRandom(Integer ... excluded) {
+  private Integer drawRandom(Integer... excluded) {
     Collection<Integer> excludedSet = new HashSet<>(Arrays.asList(excluded));
     Integer ball = randomBall();
     // it's not optimal, but it shoud work

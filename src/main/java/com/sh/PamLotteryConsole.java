@@ -39,7 +39,7 @@ public class PamLotteryConsole {
 
   private void processInputCommand(String input) {
     switch (input.toLowerCase()) {
-      case "nextMonth":
+      case "nextmonth":
         lottery = new PamLotteryImpl(1, lottery.info());
       case "info":
         print(String.format("The PAM Lottery pot is %s EUR", lottery.info()));

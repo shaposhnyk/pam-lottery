@@ -11,12 +11,18 @@ import java.util.Map;
  */
 @NotNull
 public interface PamLottery {
+  default String name() {
+    return "Name";
+  }
+
   /**
    * @return money available in the pot
    */
   BigDecimal info();
 
   /**
+   * Purchase a ticket for a random ball for 10 CHF
+   *
    * @return ticket for a ball#
    * @throws IllegalStateException if draw is already made in this round
    */
